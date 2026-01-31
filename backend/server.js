@@ -27,7 +27,14 @@ const SAVAGE_JUDGEMENTS = [
     "I've hacked up hairballs with more potential.",
     "Yawn. Call me when you do something interesting.",
     "You disgust me. Now feed me.",
-    "404: Dignity not found."
+    "404: Dignity not found.",
+    "GUILTY of being basic.",
+    "I sentence you to 10 minutes of belly rubs (for me, not you).",
+    "Your ancestors are weeping. Or laughing. Probably laughing.",
+    "If I had a thumb, I'd give this a thumbs down.",
+    "Gross.",
+    "Do you even own a scratching post? It shows.",
+    "Verdict: 100% Cringe."
 ];
 
 const LAZY_JUDGEMENTS = [
@@ -35,7 +42,10 @@ const LAZY_JUDGEMENTS = [
     "My 18 hours of sleep is necessary. You're just pointless.",
     "Productivity is chasing a laser pointer. You are staring at the wall.",
     "Imagine doing nothing and still failing. Oh wait, you don't have to imagine.",
-    "Get off the couch, you hairless ape."
+    "Get off the couch, you hairless ape.",
+    "I nap harder than you work.",
+    "You call this a confession? I call it a Tuesday.",
+    "GUILTY of Sloth. And bad fashion."
 ];
 
 // Therapy Messages
@@ -48,7 +58,11 @@ const THERAPY_MESSAGES = [
     "Soft kitty, warm kitty... you know the rest. Feel better.",
     "Everything is awful, but look at my fluffy belly.",
     "Cheer up. You could be a dog. imagine how terrible that would be.",
-    "I permit you to pet me exactly three times. Enjoy the serotonin."
+    "I permit you to pet me exactly three times. Enjoy the serotonin.",
+    "Eat a treat. You look like you need it.",
+    "I brought you a dead mouse. It's a metaphor for your problems (dead).",
+    "Purr. Purr. Purr. (That's $500 billing)",
+    "You are adequate. For a human."
 ];
 
 // Helper to get random item

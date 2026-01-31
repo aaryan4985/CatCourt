@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pop-pink: #ff00ff;
-  --color-pop-green: #39ff14;
-  --color-pop-cyan: #00ffff;
-  --color-pop-yellow: #ffff00;
-  --color-pop-purple: #8a2be2;
-  --color-pop-red: #ff0000;
-  
+  --color-pop-pink: #ff2ebb;
+  --color-pop-green: #00ff9f;
+  --color-pop-cyan: #00f3ff;
+  --color-pop-yellow: #ffe600;
+  --color-pop-purple: #9d00ff;
+  --color-pop-red: #ff0a54;
+
   --font-display: "Bangers", system-ui;
   --font-body: "Fredoka", sans-serif;
   --font-comic: "Comic Neue", cursive;
 
   --animate-wiggle: wiggle 1s ease-in-out infinite;
   --animate-bounce-slow: bounce 3s infinite;
-  
+
   @keyframes wiggle {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
+
+    0%,
+    100% {
+      transform: rotate(-2deg);
+    }
+
+    50% {
+      transform: rotate(2deg);
+    }
   }
 }
 
 body {
   font-family: var(--font-body);
   background-color: var(--color-pop-yellow);
-  background-image: 
+  background-image:
     radial-gradient(#000 2px, transparent 2px),
     radial-gradient(#000 2px, transparent 2px);
   background-position: 0 0, 25px 25px;
@@ -33,21 +40,28 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   text-transform: uppercase;
   line-height: 1;
 }
 
 .text-stroke-sm {
-    -webkit-text-stroke: 1px black;
-    text-stroke: 1px black;
+  -webkit-text-stroke: 1px black;
+  text-stroke: 1px black;
 }
+
 .text-stroke {
-    -webkit-text-stroke: 2px black;
-    text-stroke: 2px black;
+  -webkit-text-stroke: 2px black;
+  text-stroke: 2px black;
 }
+
 .text-stroke-lg {
-    -webkit-text-stroke: 3px black;
-    text-stroke: 3px black;
+  -webkit-text-stroke: 3px black;
+  text-stroke: 3px black;
 }
