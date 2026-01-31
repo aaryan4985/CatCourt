@@ -203,42 +203,45 @@ const Courtroom = () => {
       <Sticker x="85%" y="15%" rotate={10}><Gavel size={80} className="text-pop-red opacity-20" /></Sticker>
       <Sticker x="80%" y="80%" rotate={-5}><Cat size={100} className="text-pop-purple opacity-20" /></Sticker>
 
-      {/* Header - Compacted */}
+      {/* Header */}
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="text-center z-10 mb-4 relative shrink-0"
+        className="text-center z-10 mb-8 relative"
       >
-        <div className="bg-black text-white font-display text-lg px-4 py-1 rotate-[-2deg] inline-block mb-1">SUPREME COURT OF THE FELINE</div>
-        <h1 className="text-6xl md:text-8xl leading-none font-display text-stroke text-white drop-shadow-[4px_4px_0px_#000]">
+        <div className="bg-black text-white font-display text-xl px-4 py-1 rotate-[-2deg] inline-block mb-2">SUPREME COURT OF THE FELINE</div>
+        <h1 className="text-8xl md:text-9xl leading-none font-display text-stroke-lg text-white drop-shadow-[6px_6px_0px_#000]">
           CAT COURT
         </h1>
+        <h2 className="text-2xl font-comic font-bold text-black mt-4 bg-pop-cyan px-8 py-3 border-4 border-black rotate-2 inline-block shadow-[5px_5px_0px_#000]">
+          WHERE JUSTICE PUZZLES HUMANS
+        </h2>
       </motion.div>
 
       {/* Main Interface */}
-      <div className="w-full max-w-[95%] h-full flex-1 grid lg:grid-cols-[40%_1fr] gap-8 z-10 content-start pb-4">
+      <div className="max-w-7xl w-full grid lg:grid-cols-[1fr_1.5fr] gap-16 z-10 items-start">
 
         {/* Left Col: Confession Box */}
-        <div className="flex flex-col gap-6 justify-center h-full">
-          <div className="bg-white border-4 border-black p-2 shadow-[12px_12px_0px_#000] rotate-[-1deg] h-full flex flex-col">
-            <div className="bg-black text-white font-display text-3xl p-3 mb-2 flex items-center gap-3 shrink-0">
-              <MessageCircle size={32} />
+        <div className="flex flex-col gap-8">
+          <div className="bg-white border-4 border-black p-2 shadow-[12px_12px_0px_#000] rotate-[-1deg] relative z-20">
+            <div className="bg-black text-white font-display text-2xl p-3 mb-2 flex items-center gap-3">
+              <MessageCircle size={28} />
               DEFENDANT'S CONFESSION
             </div>
             <textarea
               value={confession}
               onChange={(e) => setConfession(e.target.value)}
               placeholder="I didn't feed the cat at exactly 5:00 AM..."
-              className="w-full flex-1 p-6 font-comic text-4xl focus:outline-none resize-none bg-zinc-50 border-4 border-dashed border-zinc-300 focus:border-black focus:bg-yellow-50 transition-colors leading-relaxed"
+              className="w-full h-56 p-6 font-comic text-3xl focus:outline-none resize-none bg-zinc-50 border-4 border-dashed border-zinc-300 focus:border-black focus:bg-yellow-50 transition-colors"
             />
           </div>
 
-          <div className="flex gap-4 justify-center shrink-0">
+          <div className="flex gap-4 justify-center">
             <Button
               variant="judge"
               onClick={handleJudge}
               disabled={loading || !confession}
-              className="w-full text-4xl py-6 hover:scale-[1.02] shadow-[8px_8px_0px_#ff0000]"
+              className="w-full text-3xl py-6 hover:scale-[1.02] shadow-[8px_8px_0px_#ff0000]"
               icon={Gavel}
             >
               {loading ? "DELIBERATING..." : "JUDGE ME"}
@@ -247,18 +250,18 @@ const Courtroom = () => {
         </div>
 
         {/* Right Col: Result Area */}
-        <div className="relative w-full h-full flex items-center">
+        <div className="relative w-full">
           <AnimatePresence mode="wait">
             {!result && !loading ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="w-full h-full border-8 border-black bg-pop-purple/10 border-dashed flex items-center justify-center min-h-[400px]"
+                className="w-full h-80 border-4 border-black bg-pop-purple/10 border-dashed flex items-center justify-center"
               >
                 <div className="text-center opacity-50">
-                  <Scale size={120} className="mx-auto mb-6" />
-                  <p className="font-display text-5xl">Awaiting Testimony...</p>
+                  <Scale size={80} className="mx-auto mb-6" />
+                  <p className="font-display text-3xl">Awaiting Testimony...</p>
                 </div>
               </motion.div>
             ) : null}
@@ -266,30 +269,30 @@ const Courtroom = () => {
             {result && (
               <motion.div
                 key="result"
-                initial={{ scale: 0.8, opacity: 0 }}
+                initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full h-full"
+                className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full"
               >
                 {/* 1. JUDGEMENT CARD */}
-                <div className="bg-zinc-900 border-8 double border-white p-6 shadow-[12px_12px_0px_rgba(0,0,0,0.5)] rotate-1 text-white relative overflow-hidden flex flex-col justify-between">
+                <div className="bg-zinc-900 border-4 double border-white p-6 shadow-[10px_10px_0px_rgba(0,0,0,0.5)] rotate-1 text-white relative overflow-hidden">
                   {/* Stamp */}
                   <motion.div
                     initial={{ scale: 2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.3, type: 'spring' }}
-                    className="absolute top-4 right-4 z-20"
+                    className="absolute top-2 right-2 z-20"
                   >
-                    <div className="border-4 border-red-500 text-red-500 font-display text-5xl px-4 py-2 -rotate-12 opacity-90 mix-blend-screen bg-black/60 backdrop-blur-md">
+                    <div className="border-4 border-red-500 text-red-500 font-display text-3xl px-4 py-2 -rotate-12 opacity-90 mix-blend-screen bg-black/60 backdrop-blur-sm">
                       VERDICT
                     </div>
                   </motion.div>
 
-                  <h3 className="font-display text-4xl text-pop-red mb-4 border-b-2 border-zinc-700 pb-2 flex gap-3 items-center">
-                    <ShieldAlert size={32} /> JUDGMENT
+                  <h3 className="font-display text-3xl text-pop-red mb-4 border-b-2 border-zinc-700 pb-2 flex gap-3 items-center">
+                    <ShieldAlert size={28} /> JUDGMENT
                   </h3>
 
                   {/* Judgement Image */}
-                  <div className="w-full flex-1 bg-black border-4 border-black mb-4 flex items-center justify-center overflow-hidden min-h-0">
+                  <div className="w-full h-64 bg-black border-4 border-black mb-4 flex items-center justify-center overflow-hidden">
                     <img
                       src={result.judgement.imageUrl}
                       alt="Judge"
@@ -297,7 +300,7 @@ const Courtroom = () => {
                     />
                   </div>
 
-                  <p className="font-comic text-2xl md:text-3xl font-bold text-pop-yellow leading-tight text-center">
+                  <p className="font-comic text-xl font-bold text-pop-yellow leading-tight">
                     "{result.judgement.verdict}"
                   </p>
                 </div>
@@ -307,14 +310,14 @@ const Courtroom = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="bg-white border-8 double border-pop-green p-6 shadow-[12px_12px_0px_rgba(0,0,0,0.5)] -rotate-1 relative flex flex-col justify-between"
+                  className="bg-white border-4 double border-pop-green p-6 shadow-[10px_10px_0px_rgba(0,0,0,0.5)] -rotate-1 relative"
                 >
-                  <h3 className="font-display text-4xl text-pop-green mb-4 border-b-2 border-zinc-200 pb-2 flex gap-3 items-center">
-                    <Sparkles size={32} /> THERAPY
+                  <h3 className="font-display text-3xl text-pop-green mb-4 border-b-2 border-zinc-200 pb-2 flex gap-3 items-center">
+                    <Sparkles size={28} /> THERAPY
                   </h3>
 
                   {/* Therapy Image */}
-                  <div className="w-full flex-1 bg-pop-green/10 border-4 border-pop-green/50 mb-4 flex items-center justify-center overflow-hidden min-h-0">
+                  <div className="w-full h-64 bg-pop-green/10 border-4 border-pop-green/50 mb-4 flex items-center justify-center overflow-hidden">
                     <img
                       src={result.therapy.imageUrl}
                       className="w-full h-full object-contain"
@@ -322,7 +325,7 @@ const Courtroom = () => {
                     />
                   </div>
 
-                  <p className="font-comic text-2xl md:text-3xl font-bold text-black italic leading-tight text-center">
+                  <p className="font-comic text-xl font-bold text-black italic leading-tight">
                     "{result.therapy.message}"
                   </p>
                 </motion.div>
