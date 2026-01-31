@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Zap, Star, Shapes, Cloud, Send, Smile, Frown } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import confetti from 'canvas-confetti';
 
 const cn = (...inputs) => twMerge(clsx(inputs));
+
+// Helper for scroll
+const scrollToSection = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 
 const Button = ({ children, className, variant = 'primary', onClick, disabled }) => {
   const baseStyles = "relative px-8 py-4 font-display text-2xl uppercase tracking-wider border-4 border-black transition-all active:translate-x-1 active:translate-y-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_#000] shadow-[5px_5px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed";
@@ -29,38 +38,41 @@ const Button = ({ children, className, variant = 'primary', onClick, disabled })
   );
 };
 
-// ... (NavBar, Sticker - Keep same)
-
-const NavBar = () => (
+const NavBar = ({ onChaos, onPlay, onCreate }) => (
   <nav className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
     <div className="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="bg-white border-4 border-black p-2 rotate-[-3deg] shadow-[5px_5px_0px_#000]"
+        className="bg-white border-4 border-black p-2 rotate-[-3deg] shadow-[5px_5px_0px_#000] cursor-pointer"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
         <span className="font-display text-4xl text-pop-red drop-shadow-sm">Pop!</span>
         <span className="font-display text-4xl text-pop-purple">Playground</span>
       </motion.div>
 
       <div className="flex gap-4">
-        {['Play', 'Create', 'Chaos'].map((item, i) => (
-          <motion.a
-            key={item}
-            href="#"
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ rotate: Math.random() * 10 - 5, scale: 1.1 }}
-            className={`
-              font-comic font-bold text-xl px-4 py-2 border-3 border-black bg-pop-green text-black shadow-[4px_4px_0px_#000]
-              ${i % 2 === 0 ? 'bg-pop-cyan' : 'bg-pop-green'}
-              hover:shadow-[6px_6px_0px_#000] transition-transform
-            `}
-          >
-            {item}
-          </motion.a>
-        ))}
+        <motion.button
+          onClick={onPlay}
+          whileHover={{ scale: 1.1, rotate: -3 }}
+          className="font-comic font-bold text-xl px-4 py-2 border-3 border-black bg-pop-cyan text-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000]"
+        >
+          Play
+        </motion.button>
+        <motion.button
+          onClick={onCreate}
+          whileHover={{ scale: 1.1, rotate: 2 }}
+          className="font-comic font-bold text-xl px-4 py-2 border-3 border-black bg-pop-green text-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000]"
+        >
+          Create
+        </motion.button>
+        <motion.button
+          onClick={onChaos}
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          className="font-comic font-bold text-xl px-4 py-2 border-3 border-black bg-pop-pink text-white shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000]"
+        >
+          CHAOS
+        </motion.button>
       </div>
     </div>
   </nav>
@@ -78,9 +90,9 @@ const Sticker = ({ children, x, y, rotate, delay = 0 }) => (
   </motion.div>
 );
 
-const Hero = () => {
+const Hero = ({ onStart, onRandomize }) => {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden">
       {/* Background Chaos */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -125,15 +137,15 @@ const Hero = () => {
         </motion.p>
 
         <div className="mt-12 flex gap-6 justify-center">
-          <Button className="-rotate-3">Start Playing</Button>
-          <Button variant="secondary" className="rotate-2">Randomize</Button>
+          <Button className="-rotate-3" onClick={onStart}>Start Playing</Button>
+          <Button variant="secondary" className="rotate-2" onClick={onRandomize}>Randomize</Button>
         </div>
       </motion.div>
     </section>
   );
 };
 
-const FeatureCard = ({ title, icon: Icon, color, rotate }) => (
+const FeatureCard = ({ title, icon: Icon, color, rotate, onClick }) => (
   <motion.div
     whileHover={{ scale: 1.05, rotate: 0 }}
     className={`
@@ -146,7 +158,7 @@ const FeatureCard = ({ title, icon: Icon, color, rotate }) => (
       <Icon className="w-8 h-8 text-black" />
     </div>
 
-    <div className="w-full h-40 bg-black overflow-hidden border-2 border-black mb-4 relative group">
+    <div className="w-full h-40 bg-black overflow-hidden border-2 border-black mb-4 relative group cursor-pointer" onClick={onClick}>
       {/* Abstract pattern inside card image */}
       <div className={`absolute inset-0 ${color} opacity-20`}></div>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -156,17 +168,20 @@ const FeatureCard = ({ title, icon: Icon, color, rotate }) => (
 
     <h3 className="font-display text-4xl text-black mb-2">{title}</h3>
     <p className="font-comic font-semibold text-lg leading-tight">
-      Design stuff that makes no sense but looks awesome.
+      Click the icon to explode {title.toLowerCase()} on screen!
     </p>
 
-    <button className="mt-4 font-display text-xl uppercase border-b-4 border-black hover:border-pop-pink hover:text-pop-pink transition-colors">
+    <button
+      onClick={onClick}
+      className="mt-4 font-display text-xl uppercase border-b-4 border-black hover:border-pop-pink hover:text-pop-pink transition-colors"
+    >
       GO -&gt;
     </button>
   </motion.div>
 );
 
-const Features = () => (
-  <section className="py-20 px-4 bg-pop-purple border-y-4 border-black relative overflow-hidden">
+const Features = ({ onAddSticker }) => (
+  <section id="features" className="py-20 px-4 bg-pop-purple border-y-4 border-black relative overflow-hidden">
     {/* Background Pattern */}
     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #fff 2px, transparent 2px)', backgroundSize: '20px 20px' }}></div>
 
@@ -178,9 +193,27 @@ const Features = () => (
       </div>
 
       <div className="flex flex-wrap justify-center gap-16 pt-10">
-        <FeatureCard title="SQUIGGLES" icon={Shapes} color="bg-pop-yellow" rotate="rotate-2" />
-        <FeatureCard title="SPLATTER" icon={Cloud} color="bg-pop-pink" rotate="-rotate-3" />
-        <FeatureCard title="SPARKLE" icon={Sparkles} color="bg-pop-green" rotate="rotate-1" />
+        <FeatureCard
+          title="SQUIGGLES"
+          icon={Shapes}
+          color="bg-pop-yellow"
+          rotate="rotate-2"
+          onClick={() => onAddSticker('squiggles')}
+        />
+        <FeatureCard
+          title="SPLATTER"
+          icon={Cloud}
+          color="bg-pop-pink"
+          rotate="-rotate-3"
+          onClick={() => onAddSticker('splatter')}
+        />
+        <FeatureCard
+          title="SPARKLE"
+          icon={Sparkles}
+          color="bg-pop-green"
+          rotate="rotate-1"
+          onClick={() => onAddSticker('sparkle')}
+        />
       </div>
     </div>
   </section>
@@ -212,6 +245,14 @@ const CatCourt = () => {
     setLoading(true);
     setResult(null);
 
+    // Fire confetti on judge start
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ['#ff0000', '#000000']
+    });
+
     try {
       const response = await fetch('http://localhost:3000/api/catcourt/judge', {
         method: 'POST',
@@ -223,6 +264,15 @@ const CatCourt = () => {
 
       const data = await response.json();
       setResult(data);
+
+      // Fire more confetti on success
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#39ff14', '#ffff00', '#ff00ff']
+      });
+
     } catch (error) {
       console.error("Error fetching judgement:", error);
       alert("The cats are sleeping. Try again later.");
@@ -232,7 +282,7 @@ const CatCourt = () => {
   };
 
   return (
-    <section className="py-24 px-4 bg-pop-cyan border-b-4 border-black relative min-h-[800px] flex flex-col items-center">
+    <section id="cat-court" className="py-24 px-4 bg-pop-cyan border-b-4 border-black relative min-h-[800px] flex flex-col items-center">
       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#000 3px, transparent 3px)', backgroundSize: '30px 30px' }}></div>
 
       <div className="max-w-4xl w-full z-10 flex flex-col items-center">
@@ -330,14 +380,14 @@ const Footer = () => (
           <p>123 Wonky Street<br />Chaos City, CC 99999</p>
         </div>
         <div className="flex justify-center items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-full animate-bounce"></div>
-          <div className="w-16 h-16 bg-pop-green rounded-none animate-spin-slow"></div>
-          <div className="w-16 h-16 bg-pop-cyan rounded-full border-4 border-white animate-wiggle"></div>
+          <div className="w-16 h-16 bg-white rounded-full animate-bounce cursor-pointer hover:rotate-180 transition-transform" onClick={() => confetti()}></div>
+          <div className="w-16 h-16 bg-pop-green rounded-none animate-spin-slow cursor-pointer hover:scale-150 transition-transform"></div>
+          <div className="w-16 h-16 bg-pop-cyan rounded-full border-4 border-white animate-wiggle cursor-pointer hover:skew-x-12 transition-transform"></div>
         </div>
         <div className="text-right font-display text-3xl uppercase">
-          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy">Instagram</a>
-          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy">TikTok</a>
-          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy">Twitter</a>
+          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy" onClick={(e) => { e.preventDefault(); alert('Instagram is too boring for this site.'); }}>Instagram</a>
+          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy" onClick={(e) => { e.preventDefault(); alert('We are already viral.'); }}>TikTok</a>
+          <a href="#" className="block hover:text-pop-yellow hover:underline decoration-wavy" onClick={(e) => { e.preventDefault(); alert('No one uses this anymore.'); }}>Twitter</a>
         </div>
       </div>
 
@@ -347,17 +397,109 @@ const Footer = () => (
 );
 
 export default function App() {
+  const [stickers, setStickers] = useState([]);
+  const [themeIndex, setThemeIndex] = useState(0);
+
+  const gradients = [
+    'radial-gradient(#000 2px, transparent 2px)',
+    'radial-gradient(#ff00ff 2px, transparent 2px)',
+    'radial-gradient(#0000ff 2px, transparent 2px)'
+  ];
+
+  const bgColors = [
+    'var(--color-pop-yellow)',
+    'var(--color-pop-cyan)',
+    'var(--color-pop-green)'
+  ];
+
+  const handleRandomize = () => {
+    setThemeIndex((prev) => (prev + 1) % bgColors.length);
+    confetti({ spread: 360, ticks: 50, gravity: 0, decay: 0.94, startVelocity: 30, shapes: ['star'], colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FD9A9A'] });
+  };
+
+  const handleChaos = () => {
+    const end = Date.now() + 2 * 1000;
+    const colors = ['#bb0000', '#ffffff'];
+
+    (function frame() {
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors
+      });
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
+  };
+
+  const handleAddSticker = (type) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    const x = Math.random() * 80 + 10; // Keep within 10-90%
+    const y = Math.random() * 80 + 10;
+    const rotate = Math.random() * 360;
+
+    setStickers([...stickers, { id, type, x, y, rotate }]);
+
+    // Auto remove after 5s to prevent DOM overload
+    setTimeout(() => {
+      setStickers(prev => prev.filter(s => s.id !== id));
+    }, 5000);
+
+    confetti({ particleCount: 20, spread: 30, origin: { x: x / 100, y: y / 100 } });
+  };
+
+  useEffect(() => {
+    document.body.style.backgroundColor = bgColors[themeIndex];
+    document.body.style.backgroundImage = `${gradients[themeIndex]}, ${gradients[themeIndex]}`;
+  }, [themeIndex]);
+
   return (
     <div className="min-h-screen">
-      <NavBar />
+      <NavBar
+        onPlay={() => scrollToSection('cat-court')}
+        onCreate={() => scrollToSection('features')}
+        onChaos={handleChaos}
+      />
       <Marquee />
-      <Hero />
+      <Hero
+        onStart={() => scrollToSection('cat-court')}
+        onRandomize={handleRandomize}
+      />
+
       <CatCourt />
-      <Features />
+
+      <Features onAddSticker={handleAddSticker} />
+
       <div className="h-40 bg-pop-cyan flex justify-center items-center font-display text-6xl border-y-4 border-black">
         <span className="animate-pulse">MORE CHAOS BELOW</span>
       </div>
       <Footer />
+
+      {/* Background Stickers Layer */}
+      {stickers.map(s => (
+        <motion.div
+          key={s.id}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          style={{ position: 'fixed', left: `${s.x}%`, top: `${s.y}%`, zIndex: 100, pointerEvents: 'none' }}
+        >
+          {s.type === 'squiggles' && <Shapes size={100} className="text-pop-purple animate-spin-slow" />}
+          {s.type === 'splatter' && <Cloud size={120} className="text-pop-red fill-pop-red animate-pulse" />}
+          {s.type === 'sparkle' && <Sparkles size={80} className="text-pop-yellow fill-pop-yellow animate-bounce" />}
+        </motion.div>
+      ))}
 
       {/* Blobs */}
       <div className="fixed top-20 left-10 w-32 h-32 bg-pop-pink rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow pointer-events-none -z-10"></div>
