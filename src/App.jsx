@@ -1,30 +1,35 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, Zap, Star, Shapes, MousePointer2, Smile, Cloud } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Zap, Star, Shapes, Cloud, Send, Smile, Frown } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const cn = (...inputs) => twMerge(clsx(inputs));
 
-const Button = ({ children, className, variant = 'primary' }) => {
-  const baseStyles = "relative px-8 py-4 font-display text-2xl uppercase tracking-wider border-4 border-black transition-all active:translate-x-1 active:translate-y-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_#000] shadow-[5px_5px_0px_#000]";
+const Button = ({ children, className, variant = 'primary', onClick, disabled }) => {
+  const baseStyles = "relative px-8 py-4 font-display text-2xl uppercase tracking-wider border-4 border-black transition-all active:translate-x-1 active:translate-y-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_#000] shadow-[5px_5px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
     primary: "bg-pop-pink text-white hover:bg-pop-purple",
     secondary: "bg-pop-cyan text-black hover:bg-white",
-    outline: "bg-white text-black hover:bg-pop-yellow"
+    outline: "bg-white text-black hover:bg-pop-yellow",
+    judge: "bg-black text-pop-red hover:bg-zinc-800 border-pop-red shadow-[5px_5px_0px_#ff0000]"
   };
 
   return (
     <motion.button
-      whileHover={{ scale: 1.05, rotate: Math.random() * 4 - 2 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={!disabled ? { scale: 1.05, rotate: Math.random() * 4 - 2 } : {}}
+      whileTap={!disabled ? { scale: 0.95 } : {}}
       className={cn(baseStyles, variants[variant], className)}
+      onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </motion.button>
   );
 };
+
+// ... (NavBar, Sticker - Keep same)
 
 const NavBar = () => (
   <nav className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
@@ -155,7 +160,7 @@ const FeatureCard = ({ title, icon: Icon, color, rotate }) => (
     </p>
 
     <button className="mt-4 font-display text-xl uppercase border-b-4 border-black hover:border-pop-pink hover:text-pop-pink transition-colors">
-            GO ->
+      GO -&gt;
     </button>
   </motion.div>
 );
@@ -188,12 +193,128 @@ const Marquee = () => (
       transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
       className="inline-block font-display text-5xl text-white"
     >
-      {Array(10).fill("• DONT BE BORING • HAVE FUN • MAKE MESS ").map((text, i) => (
+      {Array(10).fill("• CAT COURT • CONFESS YOUR SINS • GET JUDGED ").map((text, i) => (
         <span key={i} className="mx-4">{text}</span>
       ))}
     </motion.div>
   </div>
 );
+
+// --- NEW COMPONENT: CatCourt ---
+
+const CatCourt = () => {
+  const [confession, setConfession] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleJudge = async () => {
+    if (!confession.trim()) return;
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/catcourt/judge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: confession }),
+      });
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Error fetching judgement:", error);
+      alert("The cats are sleeping. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-24 px-4 bg-pop-cyan border-b-4 border-black relative min-h-[800px] flex flex-col items-center">
+      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#000 3px, transparent 3px)', backgroundSize: '30px 30px' }}></div>
+
+      <div className="max-w-4xl w-full z-10 flex flex-col items-center">
+        <h2 className="font-display text-8xl text-black text-stroke text-center mb-8 rotate-1">
+          CAT COURT
+        </h2>
+        <p className="font-comic text-2xl font-bold bg-white border-3 border-black p-4 rotate-[-1deg] shadow-[5px_5px_0px_#000] mb-12 max-w-2xl text-center">
+          Confess your sins. Receive judgement. Get therapy.
+          <br />(All via cats, obviously)
+        </p>
+
+        <div className="w-full relative mb-12">
+          <textarea
+            value={confession}
+            onChange={(e) => setConfession(e.target.value)}
+            placeholder="I skipped leg day to eat pizza..."
+            className="w-full h-40 p-6 font-comic text-3xl border-4 border-black shadow-[8px_8px_0px_#000] focus:outline-none focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all resize-none rotate-1 bg-white"
+          />
+          <div className="flex justify-center -mt-8 relative z-20">
+            <Button
+              variant="judge"
+              className="rotate-[-2deg] scale-125"
+              onClick={handleJudge}
+              disabled={loading}
+            >
+              {loading ? "JUDGING..." : "JUDGE ME!"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Results Area */}
+        <div className="grid md:grid-cols-2 gap-12 w-full">
+          <AnimatePresence>
+            {result && (
+              <>
+                {/* JUDGEMENT CARD */}
+                <motion.div
+                  initial={{ x: -100, opacity: 0, rotate: -10 }}
+                  animate={{ x: 0, opacity: 1, rotate: -2 }}
+                  className="bg-black p-6 border-4 border-pop-red shadow-[8px_8px_0px_#ff0000]"
+                >
+                  <div className="flex justify-between items-center mb-4 text-pop-red">
+                    <Frown size={48} />
+                    <h3 className="font-display text-4xl uppercase">GUILTY!</h3>
+                  </div>
+                  <div className="aspect-square bg-zinc-800 border-2 border-pop-red mb-4 overflow-hidden relative">
+                    <img src={result.judgement.imageUrl} alt="Judging Cat" className="object-cover w-full h-full grayscale contrast-125" />
+                    <div className="absolute inset-0 bg-red-500 mix-blend-overlay opacity-50"></div>
+                  </div>
+                  <p className="font-display text-2xl text-white leading-tight">
+                    "{result.judgement.verdict}"
+                  </p>
+                </motion.div>
+
+                {/* THERAPY CARD */}
+                <motion.div
+                  initial={{ x: 100, opacity: 0, rotate: 10 }}
+                  animate={{ x: 0, opacity: 1, rotate: 2 }}
+                  transition={{ delay: 0.5 }}
+                  className="bg-white p-6 border-4 border-pop-green shadow-[8px_8px_0px_#39ff14]"
+                >
+                  <div className="flex justify-between items-center mb-4 text-pop-green">
+                    <Smile size={48} />
+                    <h3 className="font-display text-4xl uppercase">THERAPY</h3>
+                  </div>
+                  <div className="aspect-square bg-pop-green/20 border-2 border-pop-green mb-4 overflow-hidden relative">
+                    <img src={result.therapy.imageUrl} alt="Therapy Cat" className="object-cover w-full h-full hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <p className="font-comic text-xl font-bold text-black leading-tight">
+                    "{result.therapy.message}"
+                  </p>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
 
 const Footer = () => (
   <footer className="bg-black text-white pt-20 pb-10 px-4 relative overflow-hidden">
@@ -231,6 +352,7 @@ export default function App() {
       <NavBar />
       <Marquee />
       <Hero />
+      <CatCourt />
       <Features />
       <div className="h-40 bg-pop-cyan flex justify-center items-center font-display text-6xl border-y-4 border-black">
         <span className="animate-pulse">MORE CHAOS BELOW</span>
